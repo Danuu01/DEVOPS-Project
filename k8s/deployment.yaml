@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker
+  labels:
+    app: goal-tracker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: goal-tracker
+  template:
+    metadata:
+      labels:
+        app: goal-tracker
+    spec:
+      containers:
+      - name: goal-tracker
+        image: goal-tracker:latest  # Replace with your actual image name/tag
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: goal-tracker-config
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+        - name: db-volume
+          mountPath: /app/goals.db
+          subPath: goals.db
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: goal-tracker-data-pvc
+      - name: db-volume
+        persistentVolumeClaim:
+          claimName: goal-tracker-db-pvc

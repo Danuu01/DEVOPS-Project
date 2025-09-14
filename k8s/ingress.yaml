@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: goal-tracker-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # Add SSL certificate annotation if you have one
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx  # Adjust based on your ingress controller
+  rules:
+  - host: goal-tracker.yourdomain.com  # Replace with your actual domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: goal-tracker-service
+            port:
+              number: 80
+  # Uncomment for HTTPS
+  # tls:
+  # - hosts:
+  #   - goal-tracker.yourdomain.com
+  #   secretName: goal-tracker-tls
