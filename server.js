@@ -39,6 +39,11 @@ db.serialize(() => {
 
 // API Routes
 
+// Health check endpoint for Kubernetes
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
 // Get all goals
 app.get('/api/goals', (req, res) => {
   db.all('SELECT * FROM goals ORDER BY created_at DESC', (err, rows) => {
@@ -157,7 +162,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend/dist/frontend/index.html'));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Database initialized: goals.db`);
 });
