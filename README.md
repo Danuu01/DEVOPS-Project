@@ -229,6 +229,6 @@ Check the console output for detailed error messages. The application includes c
 - Goal templates and suggestions
 - Email reminders and notifications
 
----
+-----
 
 **Happy goal tracking! 🎉**
